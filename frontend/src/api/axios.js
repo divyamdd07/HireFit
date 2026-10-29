@@ -10,5 +10,16 @@ api.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const code = error.response?.data?.code;
+    if (code === "RECRUITER_NOT_VERIFIED" && window.location.pathname !== "/recruiter/verification") {
+      window.location.assign("/recruiter/verification");
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 export default api;

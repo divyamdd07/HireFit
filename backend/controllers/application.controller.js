@@ -7,6 +7,7 @@ import { analyzeResumeWithAI } from "../services/ai.service.js";
 import { calculateAtsScore } from "../services/atsScoring.service.js";
 import { notify } from "../services/notification.service.js";
 import { emailUser } from "../services/email.service.js";
+import { isVerifiedRecruiter } from "../middleware/auth.middleware.js";
 
 // Har chhote status pe email nahi bhejte (spam lagta hai)
 const EMAIL_STATUSES = ["assessment", "shortlisted", "interview", "selected", "rejected"];
@@ -141,6 +142,9 @@ export async function downloadResume(req, res, next) {
     const isJobRecruiter = application.job.recruiter.toString() === req.user._id.toString();
     if (!isOwner && !isJobRecruiter && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not allowed." });
+    }
+     if (isJobRecruiter && !isVerifiedRecruiter(req.user)) {
+      return res.status(403).json({ code: "RECRUITER_NOT_VERIFIED", message: "Your recruiter account is not verified." });
     }
 
     if (application.resumeFile?.length) {

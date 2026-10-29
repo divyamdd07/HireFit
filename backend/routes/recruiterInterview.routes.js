@@ -10,11 +10,11 @@ import {
   cancelInterview,
   getMySchedule,
 } from "../controllers/recruiterInterview.controller.js";
-import { protect, authorize } from "../middleware/auth.middleware.js";
+import { protect, authorize,requireVerifiedRecruiter } from "../middleware/auth.middleware.js";
 import { aiLimiter } from "../middleware/rateLimit.middleware.js";
 
 const router = Router();
-const recruiterOnly = [protect, authorize("recruiter")];
+const recruiterOnly = [protect, authorize("recruiter"),requireVerifiedRecruiter];
 
 router.get("/schedule", protect, authorize("candidate"), getMySchedule); // candidate ke liye
 

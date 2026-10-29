@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "./NotificationBell";
-
+import { isVerifiedRecruiter } from "../utils/recruiter";
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -25,18 +25,24 @@ export default function Navbar() {
     </>
   )}
 
-  {user.role === "recruiter" && (
-    <>
-      <Link to="/my-jobs" className="text-sm hover:text-blue-600">My Jobs</Link>
-      <Link to="/jobs/new" className="text-sm hover:text-blue-600">Post Job</Link>
-      <Link to="/assessments" className="text-sm hover:text-blue-600">Assessments</Link>
-      <Link to="/recruiter/interviews" className="text-sm hover:text-blue-600">Interviews</Link>
-    </>
-  )}
+ {user.role === "recruiter" && isVerifiedRecruiter(user) && (
+  <>
+    <Link to="/my-jobs" className="text-sm hover:text-blue-600">My Jobs</Link>
+    <Link to="/jobs/new" className="text-sm hover:text-blue-600">Post Job</Link>
+    <Link to="/assessments" className="text-sm hover:text-blue-600">Assessments</Link>
+    <Link to="/recruiter/interviews" className="text-sm hover:text-blue-600">Interviews</Link>
+  </>
+)}
+{user.role === "recruiter" && !isVerifiedRecruiter(user) && (
+  <Link to="/recruiter/verification" className="text-sm text-orange-600 hover:underline">
+    Verification ({user.verificationStatus === "none" ? "incomplete" : user.verificationStatus})
+  </Link>
+)}
   {user.role === "admin" && (
   <>
     <Link to="/admin/users" className="text-sm hover:text-blue-600">Users</Link>
     <Link to="/admin/jobs" className="text-sm hover:text-blue-600">Jobs</Link>
+    <Link to="/admin/recruiters" className="text-sm hover:text-blue-600">Recruiters</Link>
   </>
 )}
 </div>

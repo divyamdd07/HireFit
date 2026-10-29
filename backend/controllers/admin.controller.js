@@ -4,7 +4,7 @@ import Application from "../models/Application.js";
 import Assessment from "../models/Assessment.js";
 import Attempt from "../models/Attempt.js";
 import MockInterview from "../models/MockInterview.js";
-
+import { logAudit, closeOpenJobs } from "../services/moderation.service.js";
 const httpError = (status, message) => Object.assign(new Error(message), { status });
 const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -69,18 +69,38 @@ export async function updateUser(req, res, next) {
     const user = await User.findById(req.params.id);
     if (!user) throw httpError(404, "User not found.");
 
-    // Guardrails
     if (user._id.toString() === req.user._id.toString()) throw httpError(400, "You cannot change your own account.");
     if (user.role === "admin") throw httpError(403, "Admin accounts cannot be changed here.");
 
-    if (typeof req.body.isBlocked === "boolean") user.isBlocked = req.body.isBlocked;
+    const details = {};
+    let closedJobs = 0;
 
-    if (req.body.role !== undefined) {
-      if (!["candidate", "recruiter"].includes(req.body.role)) throw httpError(400, "Invalid role.");
-      user.role = req.body.role;
+    if (typeof req.body.isBlocked === "boolean" && req.body.isBlocked !== user.isBlocked) {
+      user.isBlocked = req.body.isBlocked;
+      details.isBlocked = user.isBlocked;
+      if (user.isBlocked) closedJobs += await closeOpenJobs(user._id);
     }
 
+    if (req.body.role !== undefined && req.body.role !== user.role) {
+      if (!["candidate", "recruiter"].includes(req.body.role)) throw httpError(400, "Invalid role.");
+      details.role = { from: user.role, to: req.body.role };
+      if (user.role === "recruiter") closedJobs += await closeOpenJobs(user._id);
+
+      user.role = req.body.role;
+      // Role badalne se verification NAHI milta. Naya recruiter ko details bhejni padengi
+      user.verificationStatus = "none";
+      user.verificationReason = "";
+    }
+
+    if (Object.keys(details).length === 0) return res.json({ user });
+
     await user.save();
+    logAudit({
+      actor: req.user._id,
+      target: user._id,
+      action: details.role ? "user.role_change" : details.isBlocked ? "user.block" : "user.unblock",
+      details: { ...details, closedJobs },
+    });
     res.json({ user });
   } catch (err) {
     next(err);

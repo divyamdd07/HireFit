@@ -26,6 +26,10 @@ import RecruiterInterviewsPage from "./pages/RecruiterInterviewsPage";
 import InterviewRoomPage from "./pages/InterviewRoomPage";
 import MyScheduledInterviewsPage from "./pages/MyScheduledInterviewsPage";
 import { NotificationProvider } from "./context/NotificationContext";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import RecruiterVerificationPage from "./pages/RecruiterVerificationPage";
+import AdminRecruitersPage from "./pages/AdminRecruitersPage";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -37,7 +41,9 @@ export default function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-
+           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/recruiter/verification" element={<ProtectedRoute roles={["recruiter"]} allowUnverified><RecruiterVerificationPage /></ProtectedRoute>} />
+          <Route path="/admin/recruiters" element={<ProtectedRoute roles={["admin"]}><AdminRecruitersPage /></ProtectedRoute>} />
           {/* Candidate */}
           <Route path="/ats" element={<ProtectedRoute roles={["candidate"]}><AtsPage /></ProtectedRoute>} />
           <Route path="/jobs" element={<ProtectedRoute roles={["candidate"]}><JobsPage /></ProtectedRoute>} />

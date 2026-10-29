@@ -31,7 +31,7 @@ function JobCard({ job }) {
       <div>
         <h2 className="text-xl font-semibold">{job.title}</h2>
         <p className="text-sm text-gray-500">
-          {job.recruiter?.name} • {job.location || "Remote"} • {job.employmentType} • {job.minExperience}+ yrs
+          {job.recruiter?.recruiterProfile?.companyName || job.recruiter?.name} • {job.location || "Remote"} • {job.employmentType} • {job.minExperience}+ yrs
         </p>
       </div>
       <p className="text-sm text-gray-700 line-clamp-3">{job.description}</p>

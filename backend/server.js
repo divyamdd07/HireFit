@@ -22,6 +22,7 @@ import dashboardRoutes from "./routes/dashboard.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import recruiterInterviewRoutes from "./routes/recruiterInterview.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import recruiterVerificationRoutes from "./routes/recruiterVerification.routes.js";
 
 const app = express();
 
@@ -49,7 +50,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/recruiter-interviews", recruiterInterviewRoutes);
 app.use("/api/notifications", notificationRoutes);
-
+app.use("/api/recruiter-verification", recruiterVerificationRoutes);
 app.use("/api", (req, res) => res.status(404).json({ message: "Route not found." }));
 
 // Central error handler

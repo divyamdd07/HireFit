@@ -35,7 +35,7 @@ export async function createJob(req, res, next) {
 export async function getOpenJobs(req, res, next) {
   try {
     const jobs = await Job.find({ status: "open" })
-      .populate("recruiter", "name")
+      .populate("recruiter", "name recruiterProfile.companyName")
       .sort({ createdAt: -1 });
     res.json({ jobs });
   } catch (err) {

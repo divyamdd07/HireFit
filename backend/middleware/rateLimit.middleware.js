@@ -10,7 +10,10 @@ const make = (minutes, limit, message) =>
   });
 
 export const generalLimiter = make(15, 600, "Too many requests. Please slow down.");
-export const authLimiter = make(15, 20, "Too many login attempts. Try again in 15 minutes.");
+export const authLimiter = make(15, 100, "Too many login attempts. Try again in 15 minutes.");
 export const runLimiter = make(1, 30, "Too many code runs. Wait a minute.");
 // AI calls mehngi aur slow hain
 export const aiLimiter = make(60, 30, "AI usage limit reached. Try again later.");
+
+// Email verify, resend, DNS check
+export const verifyLimiter = make(60, 15, "Too many verification requests. Try again later.");
