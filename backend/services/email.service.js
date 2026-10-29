@@ -58,16 +58,16 @@ function buildHtml({ heading, lines, linkPath, linkText }) {
   const button = linkPath
     ? `<p style="margin:20px 0 0"><a href="${escapeHtml(clientUrl() + linkPath)}"
          style="background:#2563eb;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none">
-         ${escapeHtml(linkText || "Open SmartHire")}</a></p>`
+         ${escapeHtml(linkText || "Open HireFit")}</a></p>`
     : "";
 
   return `
   <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:24px;color:#111827">
-    <h2 style="color:#2563eb;margin-top:0">SmartHire</h2>
+    <h2 style="color:#2563eb;margin-top:0">SmartFit</h2>
     <h3 style="margin:0 0 16px">${escapeHtml(heading)}</h3>
     ${body}
     ${button}
-    <p style="margin-top:28px;font-size:12px;color:#6b7280">This is an automated message from SmartHire.</p>
+    <p style="margin-top:28px;font-size:12px;color:#6b7280">This is an automated message from HireFit.</p>
   </div>`;
 }
 
@@ -81,7 +81,7 @@ async function sendViaBrevo({ to, subject, html, text }) {
       accept: "application/json",
     },
     body: JSON.stringify({
-      sender: { name: process.env.BREVO_SENDER_NAME || "SmartHire", email: process.env.BREVO_SENDER_EMAIL },
+      sender: { name: process.env.BREVO_SENDER_NAME || "HireFit", email: process.env.BREVO_SENDER_EMAIL },
       to: [{ email: to }],
       subject,
       htmlContent: html,
