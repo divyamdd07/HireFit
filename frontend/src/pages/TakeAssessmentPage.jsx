@@ -108,7 +108,7 @@ export default function TakeAssessmentPage() {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-4">
       {/* Header */}
-      <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow">
+      <div className="flex flex-wrap justify-between items-center gap-3 bg-white p-4 rounded-xl shadow">
         <div>
           <h1 className="text-xl font-bold">{assessment.title}</h1>
           <p className="text-sm text-gray-500">Question {current + 1} of {assessment.questions.length} • {question.points} pts</p>

@@ -13,7 +13,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import StatCard from "../components/StatCard";
 import StatusBadge from "../components/StatusBadge";
-
+import PageHeader from "../components/PageHeader";
 export default function RecruiterDashboard() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
@@ -43,15 +43,11 @@ export default function RecruiterDashboard() {
   } = data;
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-5">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Welcome, {user.name}</h1>
-        <Link
-          to="/jobs/new"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          + Post job
-        </Link>
-      </div>
+     <PageHeader title={`Welcome, ${user.name}`} subtitle="Your hiring pipeline at a glance.">
+  <Link to="/jobs/new" className="rounded-lg bg-white px-4 py-2 font-medium text-slate-900 hover:bg-slate-100">
+    + Post job
+  </Link>
+</PageHeader>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <StatCard label="Active jobs" value={stats.activeJobs} />

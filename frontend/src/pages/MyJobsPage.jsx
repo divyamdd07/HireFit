@@ -17,7 +17,7 @@ export default function MyJobsPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-4">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-3">
         <h1 className="text-3xl font-bold">My Jobs</h1>
         <Link to="/jobs/new" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           + New Job
@@ -33,7 +33,7 @@ export default function MyJobsPage() {
             <h2 className="text-lg font-semibold">{job.title}</h2>
             <p className="text-sm text-gray-500 capitalize">{job.status}</p>
           </div>
-          <div className="flex gap-4 text-sm items-center">
+          <div className="flex flex-wrap gap-3 text-sm items-center">
             <Link to={`/jobs/${job._id}/applicants`} className="text-blue-600 hover:underline">
               View applicants
             </Link>

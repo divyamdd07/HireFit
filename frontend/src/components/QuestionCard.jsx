@@ -4,7 +4,7 @@ export default function QuestionCard({ question, index, children }) {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow space-y-3">
-      <div className="flex justify-between items-start gap-4">
+      <div className="flex flex-wrap justify-between items-start gap-4">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="font-semibold">Q{index + 1}</span>

@@ -102,7 +102,7 @@ export default function AssessmentEditorPage() {
       <Link to="/assessments" className="text-sm text-blue-600">← All assessments</Link>
       <Link to={`/assessments/${id}/results`} className="text-sm text-blue-600 ml-4">View results →</Link>
 
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start gap-3">
         <div>
           <h1 className="text-3xl font-bold">{assessment.title}</h1>
           <p className="text-gray-500 text-sm">

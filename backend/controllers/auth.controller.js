@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import { buildRecruiterProfile } from "../utils/recruiterVerification.js";
 import { hashToken, issueEmailVerification } from "../services/emailVerification.service.js";
-
+import { OAuth2Client } from "google-auth-library";
 const createToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || "7d",
@@ -21,7 +21,7 @@ const publicUser = (user) => ({
 });
 
 const isText = (v) => typeof v === "string";
-
+const googleClient = new OAuth2Client();
 export async function register(req, res, next) {
   try {
     const { name, email, password, role } = req.body;
@@ -72,7 +72,7 @@ export async function login(req, res, next) {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
-    const ok = user && (await bcrypt.compare(password, user.password));
+    const ok = user && user.password && (await bcrypt.compare(password, user.password));
     if (!ok) return res.status(401).json({ message: "Invalid email or password." });
     if (user.isBlocked) return res.status(403).json({ message: "Your account has been blocked." });
 
@@ -81,7 +81,60 @@ export async function login(req, res, next) {
     next(err);
   }
 }
+export async function googleLogin(req, res, next) {
+  try {
+    const { credential } = req.body;
+    if (!isText(credential) || !credential) {
+      return res.status(400).json({ message: "Google credential is missing." });
+    }
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(503).json({ message: "Google sign-in is not configured on the server." });
+    }
 
+    // Google ka token SERVER pe verify hota hai. Frontend ki baat par bharosa nahi
+    let profile;
+    try {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID, // token isi app ke liye bana hona chahiye
+      });
+      profile = ticket.getPayload();
+    } catch {
+      return res.status(401).json({ message: "Google sign-in failed. Please try again." });
+    }
+    if (!profile?.sub || !profile.email || profile.email_verified !== true) {
+      return res.status(401).json({ message: "Your Google email is not verified." });
+    }
+
+    const email = profile.email.toLowerCase();
+    let user = await User.findOne({ googleId: profile.sub }).select("+password");
+    if (!user) user = await User.findOne({ email }).select("+password");
+
+    if (user?.isBlocked) return res.status(403).json({ message: "Your account has been blocked." });
+
+    if (!user) {
+      // Naya account: hamesha candidate. Recruiter email form se register karta hai
+      user = await User.create({
+        name: profile.name || email.split("@")[0],
+        email,
+        googleId: profile.sub,
+        role: "candidate",
+        emailVerified: true,
+      });
+    } else if (!user.googleId) {
+      // Purana account same email se mila: Google se link karo.
+      // Agar email pehle verify nahi tha, to purana password hata do (neeche note dekho)
+      if (!user.emailVerified) user.password = undefined;
+      user.googleId = profile.sub;
+      user.emailVerified = true;
+      await user.save();
+    }
+
+    res.json({ token: createToken(user), user: publicUser(user) });
+  } catch (err) {
+    next(err);
+  }
+}
 export async function getMe(req, res) {
   res.json({ user: publicUser(req.user) });
 }

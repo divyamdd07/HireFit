@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import AuthLayout, { authInput, authButton } from "../components/AuthLayout";
+import GoogleButton, { googleEnabled } from "../components/GoogleButton";
 import RecruiterProfileFields from "../components/RecruiterProfileFields";
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "", email: "", password: "", role: "candidate",
@@ -30,33 +32,60 @@ export default function RegisterPage() {
     }
   };
 
-  const inputClass = "w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const handleGoogle = async (credential) => {
+    setError("");
+    try {
+      await googleLogin(credential);
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Google sign-up failed.");
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow w-full max-w-md space-y-4">
-        <h1 className="text-2xl font-bold">Create account</h1>
-        <input name="name" placeholder="Full name" className={inputClass} required onChange={handleChange} />
-        <input name="email" type="email" className={inputClass} required onChange={handleChange}
-          placeholder={isRecruiter ? "Official work email" : "Email"} />
-        <input name="password" type="password" placeholder="Password (min 6 chars)" className={inputClass}
-          required onChange={handleChange} />
-        <select name="role" className={inputClass} value={form.role} onChange={handleChange}>
-          <option value="candidate">I'm a Candidate</option>
-          <option value="recruiter">I'm a Recruiter</option>
-        </select>
+    <AuthLayout
+      title="Create your account"
+      subtitle="Start in under a minute"
+      footer={<>Have an account? <Link to="/login" className="text-indigo-300 hover:underline">Login</Link></>}
+    >
+      {/* Role toggle */}
+      <div className="grid grid-cols-2 gap-1 rounded-xl bg-white/5 p-1">
+        {["candidate", "recruiter"].map((r) => (
+          <button key={r} type="button" onClick={() => setForm({ ...form, role: r })}
+            className={`rounded-lg py-2 text-sm font-medium capitalize transition ${
+              form.role === r ? "bg-indigo-500 text-white shadow" : "text-slate-300 hover:text-white"
+            }`}>
+            {r}
+          </button>
+        ))}
+      </div>
 
-        {isRecruiter && <RecruiterProfileFields form={form} onChange={handleChange} />}
-
-        {error && <p className="text-red-600 text-sm">{error}</p>}
-        <button disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50">
-          {loading ? "Creating..." : "Register"}
-        </button>
-        <p className="text-sm text-center">
-          Have an account? <Link to="/login" className="text-blue-600">Login</Link>
+      {googleEnabled && !isRecruiter && (
+        <>
+          <GoogleButton onCredential={handleGoogle} onError={setError} text="signup_with" />
+          <div className="flex items-center gap-3 text-xs text-slate-500">
+            <div className="h-px flex-1 bg-white/10" /> OR <div className="h-px flex-1 bg-white/10" />
+          </div>
+        </>
+      )}
+      {isRecruiter && (
+        <p className="text-xs text-slate-400">
+          Recruiters register with an official work email so an admin can verify them. Google sign-up is for candidates.
         </p>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input name="name" placeholder="Full name" className={authInput} required onChange={handleChange} />
+        <input name="email" type="email" className={authInput} required onChange={handleChange}
+          placeholder={isRecruiter ? "Official work email" : "Email"} />
+        <input name="password" type="password" placeholder="Password (min 6 chars)" className={authInput}
+          required onChange={handleChange} />
+
+        {isRecruiter && <RecruiterProfileFields dark form={form} onChange={handleChange} />}
+
+        {error && <p className="text-sm text-red-400">{error}</p>}
+        <button disabled={loading} className={authButton}>{loading ? "Creating..." : "Register"}</button>
       </form>
-    </div>
+    </AuthLayout>
   );
 }

@@ -63,7 +63,7 @@ function buildHtml({ heading, lines, linkPath, linkText }) {
 
   return `
   <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:24px;color:#111827">
-    <h2 style="color:#2563eb;margin-top:0">SmartFit</h2>
+    <h2 style="color:#2563eb;margin-top:0">HireFit</h2>
     <h3 style="margin:0 0 16px">${escapeHtml(heading)}</h3>
     ${body}
     ${button}

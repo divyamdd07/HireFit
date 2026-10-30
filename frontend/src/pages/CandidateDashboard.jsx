@@ -6,7 +6,7 @@ import ReadinessCard from "../components/ReadinessCard";
 import SkillComparison from "../components/SkillComparison";
 import RoadmapSection from "../components/RoadmapSection";
 import StatusBadge from "../components/StatusBadge";
-
+import PageHeader from "../components/PageHeader";
 function Chips({ title, items, style }) {
   return (
     <div>
@@ -68,10 +68,10 @@ export default function CandidateDashboard() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-5">
-      <div>
-        <h1 className="text-3xl font-bold">Welcome, {user.name}</h1>
-        {data.targetRole && <p className="text-gray-500">Latest target role: {data.targetRole}</p>}
-      </div>
+     <PageHeader
+  title={`Welcome, ${user.name}`}
+  subtitle={data.targetRole ? `Latest target role: ${data.targetRole}` : "Track your readiness, skills and applications."}
+/>
 
       {/* Progress */}
       <div className="bg-white p-5 rounded-xl shadow">
@@ -110,7 +110,7 @@ export default function CandidateDashboard() {
         </div>
         {data.applications.length === 0 && <p className="text-sm text-gray-400">No applications yet.</p>}
         {data.applications.map((a) => (
-          <div key={a._id} className="flex justify-between items-center border-t pt-2 text-sm">
+          <div key={a._id} className="flex flex-wrap gap-2 justify-between items-center border-t pt-2 text-sm">
             <span className="font-medium">{a.jobTitle}</span>
             <span className="text-gray-500">ATS {a.atsScore} • Match {a.matchPercentage}%</span>
             <StatusBadge status={a.status} />

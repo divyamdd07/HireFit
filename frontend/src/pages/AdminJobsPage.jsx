@@ -32,14 +32,14 @@ export default function AdminJobsPage() {
       {!loading && jobs.length === 0 && <p className="text-gray-400">No jobs yet.</p>}
 
       {jobs.map((job) => (
-        <div key={job._id} className="bg-white p-4 rounded-xl shadow flex justify-between items-center">
+        <div key={job._id} className="bg-white p-4 rounded-xl shadow flex flex-wrap justify-between items-center gap-3">
           <div>
             <h2 className="font-semibold">{job.title}</h2>
             <p className="text-sm text-gray-500">
               {job.recruiter?.name} ({job.recruiter?.email}) • {new Date(job.createdAt).toLocaleDateString()}
             </p>
           </div>
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className={`px-3 py-1 rounded-full capitalize ${
               job.status === "open" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
             }`}>{job.status}</span>

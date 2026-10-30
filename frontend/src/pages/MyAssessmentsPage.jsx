@@ -83,14 +83,14 @@ export default function MyAssessmentsPage() {
       {!loading && assessments.length === 0 && <p className="text-gray-400">No assessments yet.</p>}
 
       {assessments.map((a) => (
-        <div key={a._id} className="bg-white p-5 rounded-xl shadow flex justify-between items-center">
+        <div key={a._id} className="bg-white p-5 rounded-xl shadow flex flex-wrap gap-3 justify-between items-center">
           <div>
             <h2 className="text-lg font-semibold">{a.title}</h2>
             <p className="text-sm text-gray-500">
               {a.job?.title} • {a.questions.length} questions • {a.durationMinutes} min • {a.difficulty}
             </p>
           </div>
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
             <span className={`px-3 py-1 rounded-full capitalize ${
               a.status === "published" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
             }`}>{a.status}</span>

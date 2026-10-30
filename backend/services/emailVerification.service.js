@@ -17,7 +17,7 @@ export async function issueEmailVerification(user) {
   }
 
   emailUser(user._id, {
-    subject: "Verify your SmartHire recruiter email",
+    subject: "Verify your HireFit recruiter email",
     heading: "Verify your email address",
     lines: [
       "Please confirm that this is your work email. The link is valid for 24 hours.",

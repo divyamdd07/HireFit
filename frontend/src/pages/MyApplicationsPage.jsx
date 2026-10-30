@@ -23,7 +23,7 @@ export default function MyApplicationsPage() {
 
       {applications.map((app) => (
         <div key={app._id} className="bg-white p-5 rounded-xl shadow space-y-4">
-          <div className="flex justify-between items-start">
+          <div className="flex gap-3 justify-between items-start">
             <div>
               <h2 className="text-xl font-semibold">{app.job?.title}</h2>
               <p className="text-sm text-gray-500">

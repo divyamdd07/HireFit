@@ -41,7 +41,7 @@ function JobCard({ job }) {
         ))}
       </div>
 
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-3 pt-2">
         <input type="file" accept="application/pdf" className="text-sm"
           onChange={(e) => setFile(e.target.files[0])} />
         <button onClick={handleApply} disabled={loading}
