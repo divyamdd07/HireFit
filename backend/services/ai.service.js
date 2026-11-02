@@ -1,8 +1,8 @@
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: process.env.NVIDIA_API_KEY,
-  baseURL: "https://integrate.api.nvidia.com/v1",
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: "https://api.groq.com/openai/v1",
   timeout: 120000,
 });
 
@@ -44,7 +44,7 @@ Job description: ${job.description}
 RESUME:
 ${resumeText}`;
 
-  console.log("🤖 Sending request to NVIDIA AI...");
+  console.log("🤖 Sending request to Groq AI...");
   console.log("🧠 Model:", process.env.AI_MODEL);
 
   const startTime = Date.now();
@@ -64,7 +64,7 @@ ${resumeText}`;
   const endTime = Date.now();
 
   console.log(
-    `✅ NVIDIA AI responded in ${(endTime - startTime) / 1000} seconds`
+    `✅ Groq AI responded in ${(endTime - startTime) / 1000} seconds`
   );
 
   // Get AI response safely
